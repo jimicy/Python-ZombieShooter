@@ -173,7 +173,7 @@ class Zombie(pygame.sprite.Sprite):
         '''get the value'''
         return self.__value
         
-    def get_hp(self,damage):
+    def damage_hp(self,damage):
         '''subtract damage from hp and returns the state of the hp'''
         self.__hp-=damage
         if self.__hp>0:
@@ -279,8 +279,8 @@ class Player(pygame.sprite.Sprite):
         self.__speed=4
         
     def increase_speed(self):
-        '''set speed to 10'''
-        self.__speed=10
+        '''set speed to 8'''
+        self.__speed=8
         
     def go_left(self,screen):
         '''go left, if rect.left is less than 0 no movement occurs'''

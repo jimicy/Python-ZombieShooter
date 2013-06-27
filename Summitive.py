@@ -26,7 +26,7 @@ def main():
     no.set_volume(0.8)
     
     #Create the sprites
-    #player,zombies,health,armour,health text,armour text,wave text,ammo text
+    #Create the player
     player=sprite_module.Player(screen)
     
     #Create the zombies
@@ -39,13 +39,13 @@ def main():
             z_img.append(pygame.image.load('./enemy/'+file))
             
     #zombie types
-    #speed, damage, hp, attack speed, value
+    #[speed, damage, hp, attack speed, score value]
     z_info=[[3,5,10,100,2],[3,5,20,100,4],[3,5,20,100,6],[3,5,20,100,8]\
                   ,[3,5,20,100,10],[3,5,20,100,12],[15,20,100,100,40]]
     
-
     zombies=[]
     
+    #generate 10 random type zombies
     for i in range(10):
         while True:
             a=random.randint(0,6)
@@ -55,13 +55,15 @@ def main():
                                 z_info[a][2],z_info[a][3],z_info[a][4],z_img[a],a,player.rect.center))
                 wave[a]=wave[a]-1
                 break
-        
+            
+    #Create health,armour,health text,armour text,wave text 
     health=sprite_module.StatusBar((0,20),(255,0,0),(0,0,0),(250,30),200,350,0,None)
     armour=sprite_module.StatusBar((0,52),(238,233,233),(139,137,137),(250,30),100,200,0,None)
     health_text=sprite_module.Text(25,(255,255,255),(125,35),'350,350','%s/%s',255)
     armour_text=sprite_module.Text(25,(0,0,0),(125,70),'200,200','%s/%s',255)
     wave_text=sprite_module.Text\
              (30,(255,255,255),(430,60),'0,1,'+str(sum(wave)),'Score:%s Wave:%s Zombies Left:%s',255)
+    
     #Generate ammo text
     ammo=[[20,30],[40,20],[15,10],[100,10],[30,30]]
     temp_string=''
@@ -71,13 +73,14 @@ def main():
              (20,(255,255,255),(800,80),temp_string.strip(','),\
               '%s/%s          %s/%s          %s/%s          %s/%s          %s/%s',255)
     
-    #Group the Sprites
+    #Create sprite groups, sprites can be added to groups at anytime
     powerupGroup=pygame.sprite.Group()
     zombieGroup=pygame.sprite.Group(zombies)
     bullet_img=pygame.sprite.Group()
     bullet_hitbox=pygame.sprite.Group()
     reloading=pygame.sprite.Group()
     
+    #add sprite groups to be updated in the following order
     allSprites = pygame.sprite.OrderedUpdates\
     (bullet_img,bullet_hitbox,player,zombieGroup,powerupGroup,reloading,health,armour,health_text,armour_text,wave_text,ammo_text)
     
@@ -102,17 +105,18 @@ def main():
     boss_spawn=False
     
     #Power up images
-    #speed,damage,hp,armor,ammo,invincible
+    #Powerups are 2x speed,2x damage,hp,armor,ammo,invincible
     powerup_images=[]
     for file in os.listdir('powerups/'):
             powerup_images.append(pygame.image.load('./powerups/'+file))
+            
     #Bullet images
     bullet_images=[]
     for file in os.listdir('bullets/'):
             bullet_images.append(pygame.image.load('./bullets/'+file))
     
-    #Random Value
-    random_value=0
+    #Variable used to store a randomly generate value which is the powerup chance
+    powerup_chance=0
     
     #Wave number
     wave_num=1
@@ -126,11 +130,11 @@ def main():
     #Score
     score=0
     
-    #Player status hp, armour, default speed
+    #Player status [[current hp, max hp], [current armour, max armour], default speed]
     player_status=[[350,350],[200,200],3]
     
-    #Status of weapons Pistol, Uzi, Shotgun, Machine Gun, Railgun
-    weapon=[True,False,False,False,False]
+    #Status of weapons Pistol, Uzi, Slow Gun, Machine Gun, Railgun
+    weapon=[True,True,True,True,True]
     
     #current weapon
     current_weapon=0
@@ -180,6 +184,8 @@ def main():
 
         # Events
         for event in pygame.event.get():
+            
+            #If the user closes the windows keepGoing is set to false and loop is exited
             if event.type == pygame.QUIT:
                 keepGoing = False
 
@@ -307,9 +313,20 @@ def main():
                 zombie.move(False)
                 if not(invincible_status):
                     if zombie.get_attack():
-                        if player_status[1][0]:
+                        #if armour is greater than 0 only then can you subtract from it
+                        if player_status[1][0]>0:
+                            
+                            #armour is subtracted based on the damage inflicted by the specific zombie
                             player_status[1][0]=player_status[1][0]-zombie.get_damage()
+                            
+                            #if armour is a negative value
+                            if player_status[1][0]<0:
+                                #add the negative armour value to health
+                                player_status[0][0]=player_status[0][0]+player_status[1][0]
+                                #set current armour value to 0
+                                player_status[1][0]=0
                         else:
+                            #health is subtracted based on the damage inflicted by the specific zombie
                             player_status[0][0]=player_status[0][0]-zombie.get_damage()
         else:
             for zombie in zombieGroup:
@@ -321,51 +338,61 @@ def main():
         v=pygame.sprite.groupcollide(bullet_img,zombieGroup,True,False)
         if c:
             for bullet in c.keys():
-                #If the bullet is the slow bullet weap 3, slow the enemy
+                #If the bullet is the slow bullet weapon 3, slow the enemy
                 if bullet.get_damage()==0:
                     c[bullet][0].slow()
+                    
                 #if not do the regular bullet and enemy handling
                 else:
-                    if not(c[bullet][0].get_hp(bullet.get_damage())):
+                    
+                    #calls zombie.damage_hp(damage) method which returns false if zombie hp<=0
+                    #randomly generate a value and if it matches the powerup number, powerup is generated
+                    if not(c[bullet][0].damage_hp(bullet.get_damage())):
+                        
                         wave[c[bullet][0].get_wave_type()]=wave[c[bullet][0].get_wave_type()]-1
-                        random_value=random.randrange(99)
-                        if random_value==0:
+                        
+                        powerup_chance=random.randrange(99)
+                        
+                        if powerup_chance==0:
                             powerup_status=True
                             power=sprite_module.Powerup\
                                    (c[bullet][0].rect.center,5,powerup_images[5])
-                        elif random_value==1 or random_value==2:
+                        elif powerup_chance==1 or powerup_chance==2:
                             powerup_status=True
                             power=sprite_module.Powerup\
                                    (c[bullet][0].rect.center,0,powerup_images[0])
-                        elif random_value==3 or random_value==4:
+                        elif powerup_chance==3 or powerup_chance==4:
                             powerup_status=True
                             power=sprite_module.Powerup\
                                    (c[bullet][0].rect.center,1,powerup_images[1])
-                        elif random_value==5 or random_value==6:
+                        elif powerup_chance==5 or powerup_chance==6:
                             powerup_status=True
                             power=sprite_module.Powerup\
                                    (c[bullet][0].rect.center,2,powerup_images[2])
-                        elif random_value==7 or random_value==8:
+                        elif powerup_chance==7 or powerup_chance==8:
                             powerup_status=True
                             power=sprite_module.Powerup\
                                    (c[bullet][0].rect.center,3,powerup_images[3])
-                        elif random_value==9 or random_value==10 or random_value==11 or random_value==12:
+                        elif powerup_chance==9 or powerup_chance==10 or powerup_chance==11 or powerup_chance==12:
                             powerup_status=True
                             power=sprite_module.Powerup\
                                    (c[bullet][0].rect.center,4,powerup_images[4])
                         else:
-                            #powerup_status=False
                             powerup_status=True
                             power=sprite_module.Powerup\
                                    (c[bullet][0].rect.center,4,powerup_images[4])
-                   
+                        
+                        #if there is a powerup add it to the powerupGroup
+                        #call allSprites and update all sprites
                         if powerup_status:
                             powerupGroup.add(power)
                             allSprites = pygame.sprite.OrderedUpdates\
                                 (bullet_img,bullet_hitbox,player,zombieGroup,powerupGroup,\
                                 reloading,health,armour,health_text,armour_text,wave_text,ammo_text)
+                        
+                        #Add the value of the zombie to score
                         score+=c[bullet][0].get_value()
-                    
+                        #Kill the zombie
                         c[bullet][0].kill()
                 
         #Collision between powerups and player
@@ -381,16 +408,22 @@ def main():
                 elif powerup_type==1:
                     double_status=True
                     damage_timer=0
-                #HP
+                #HP increase by 100
                 elif powerup_type==2:
                     player_status[0][0]=player_status[0][0]+100
+                    
+                    #if the new current hp exceeds the max, set current hp to max
                     if player_status[0][0]>player_status[0][1]:
                         player_status[0][0]=player_status[0][1]
-                #Armour
+                        
+                #Armour increase by 100
                 elif powerup_type==3:
                     player_status[1][0]=player_status[1][0]+100
+                    
+                    #if the new current armour exceeds the max, set current armour to max
                     if player_status[1][0]>player_status[1][1]:
                         player_status[1][0]=player_status[1][1]
+                        
                 #Ammo
                 elif powerup_type==4:
                     min_value=90000
@@ -418,12 +451,15 @@ def main():
             #delay by %3
             if machine_gun_delay%3==0:
                 fire.play()
+                
                 #[speed: 14, damage:6]
                 bullet1=sprite_module.Bullet\
                        (bullet_images[0],player.get_angle(),\
                         player.rect.center,pygame.mouse.get_pos(),14,6,double_status)
+                
                 bullet2=sprite_module.Bullet\
                         (None,None,player.rect.center,pygame.mouse.get_pos(),14,6,double_status)
+                
                 bullet_img.add(bullet1)
                 bullet_hitbox.add(bullet2)
                 allSprites = pygame.sprite.OrderedUpdates\
