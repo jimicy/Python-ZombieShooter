@@ -12,6 +12,12 @@ Details
 --------
 This game has a score, wave number and zombies left in the current wave
 
+Every five waves a boss spawns
+
+There is active ammo for each weapon and when you run out you must reload from ammo that you current have.
+A green reloading bar will appear on top of the player. You cannot shot or switch weapons until it has finished
+reloading.
+
 HP: 350  
 Armour: 200
 
