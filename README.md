@@ -12,6 +12,7 @@ Details
 --------
 
 Powerups are: 
+
 *2x speed ![alt text](http://i.imgur.com/Eb0FN7a.png "2x Speed")
 *2x damage ![alt text](http://i.imgur.com/c8w9wSg.png "2x Damage")
 *Heal hp ![alt text](http://i.imgur.com/Px1HCUe.png "2x Damage")
