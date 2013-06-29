@@ -4,8 +4,9 @@ class StatusBar(pygame.sprite.Sprite):
     '''creates a statusbar (lifebar,armourbar,reloadbar)'''
     def __init__(self,position,color1,color2,size,status1,status2,type,increase):
         '''Accepts position,color1,color2,size,status1,status2,type, and increase.
-        depending on the type number passed, it will either be a regular statusbar
-        or a reloading statusbar'''
+        type 0=normal status bar
+        type 1=reloading status bar
+        '''
         pygame.sprite.Sprite.__init__(self)
         
         #Set variables
@@ -67,8 +68,10 @@ class Text(pygame.sprite.Sprite):
         self.__font = pygame.font.Font("American Captain.ttf", size)
         self.__color=color
         self.__position=position
+        
         if variables:
             self.__variables=variables.split(',') #splits variables into a list
+            
         self.__message=message
         self.__m=''
         self.__alpha=alpha
@@ -98,7 +101,7 @@ class Text(pygame.sprite.Sprite):
 class Zombie(pygame.sprite.Sprite):
     '''a zombie class that is randomly blitted off screen left, right and bottom.
     It will rotate and move towards the player. It also has an attack delay'''
-    def __init__(self,screen,speed,damage,hp,attack_speed,value,image,wave_type,player_pos):
+    def __init__(self,screen,speed,damage,hp,attack_speed,value,image,zombie_type,player_pos):
         '''accepts screen,speed,damage,hp,attack_speed,value,image,wave_type,player_pos'''
         pygame.sprite.Sprite.__init__(self)
         #Assign screen to a variable
@@ -121,7 +124,7 @@ class Zombie(pygame.sprite.Sprite):
         self.__value=value
         
         #Assign the wave type to a varible
-        self.__wave_type=wave_type
+        self.__zombie_type=zombie_type
         
         #Set variables for move
         self.__move=True
@@ -161,9 +164,9 @@ class Zombie(pygame.sprite.Sprite):
         else:
             return False
         
-    def get_wave_type(self):
+    def get_zombie_type(self):
         '''get the zombie type'''
-        return self.__wave_type
+        return self.__zombie_type
     
     def get_damage(self):
         '''get the damage'''
