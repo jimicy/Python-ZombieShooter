@@ -30,12 +30,12 @@ Weapons
 
 
 Powerups are: 
-* 2x speed ![alt text](http://i.imgur.com/Eb0FN7a.png "2x Speed")
-* 2x damage ![alt text](http://i.imgur.com/c8w9wSg.png "2x Damage")
+* 2x speed for 15s ![alt text](http://i.imgur.com/Eb0FN7a.png "2x Speed")
+* 2x damage for 15s![alt text](http://i.imgur.com/c8w9wSg.png "2x Damage")
 * Heal HP by 100 ![alt text](http://i.imgur.com/Px1HCUe.png "Heal HP by 100")
 * Heal Armour by 100 ![alt text](http://i.imgur.com/XnNs0bw.png "Heal Armour by 100")
-* Ammo ![alt text](http://i.imgur.com/Ubz4Etl.png "2x Damage")
-* Invincible ![alt text](http://i.imgur.com/BfJXMfn.png "2x Damage")
+* Ammo![alt text](http://i.imgur.com/Ubz4Etl.png "2x Damage")
+* Invincible for 15s![alt text](http://i.imgur.com/BfJXMfn.png "2x Damage")
  
 
 
