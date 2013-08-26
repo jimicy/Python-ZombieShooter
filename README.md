@@ -35,7 +35,7 @@ Powerups are:
 * Heal HP by 100 ![alt text](http://i.imgur.com/Px1HCUe.png "Heal HP by 100")
 * Heal Armour by 100 ![alt text](http://i.imgur.com/XnNs0bw.png "Heal Armour by 100")
 * Ammo![alt text](http://i.imgur.com/Ubz4Etl.png "2x Damage")
-* Invincible for 15s! [alt text](http://i.imgur.com/BfJXMfn.png "2x Damage")
+* Invincible for 15s ![alt text](http://i.imgur.com/BfJXMfn.png "2x Damage")
  
 
 
